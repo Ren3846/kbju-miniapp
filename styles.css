@@ -43,6 +43,7 @@ body {
     ),
     var(--bg);
   color: var(--text);
+  min-height: 100vh;
 }
 
 .container {
@@ -154,6 +155,12 @@ body {
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 8px;
+}
+.result-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
 }
 
 .btn {

@@ -29,7 +29,80 @@
     </header>
 
     <main class="container">
-      <section class="card">
+      <section id="resultsCard" class="card" hidden>
+        <h2 class="card__title">Результаты</h2>
+        <div class="totals-wrap">
+          <div class="total">
+            BMR (основной обмен): <span id="bmrValue">—</span> ккал
+          </div>
+          <div class="total">
+            TDEE (расход в день): <span id="tdeeValue">—</span> ккал
+          </div>
+          <div class="total total--accent">
+            Калории в день (дефицит 20%): <span id="deficitCal">—</span> ккал
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="result-table">
+            <thead>
+              <tr>
+                <th>Неделя</th>
+                <th>Калории/день</th>
+                <th>Белки (г)</th>
+                <th>Жиры (г)</th>
+                <th>Углеводы (г)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td id="calW1">—</td>
+                <td id="pW1">—</td>
+                <td id="fW1">—</td>
+                <td id="cW1">—</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td id="calW2">—</td>
+                <td id="pW2">—</td>
+                <td id="fW2">—</td>
+                <td id="cW2">—</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td id="calW3">—</td>
+                <td id="pW3">—</td>
+                <td id="fW3">—</td>
+                <td id="cW3">—</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td id="calW4">—</td>
+                <td id="pW4">—</td>
+                <td id="fW4">—</td>
+                <td id="cW4">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          План без учёта заболеваний. Для персональной настройки — обращайтесь к
+          специалисту.
+        </div>
+
+        <div class="result-actions">
+          <button type="button" class="btn btn-primary" id="repeatBtn">
+            Повторить расчёт
+          </button>
+          <button type="button" class="btn btn-outline" id="shareBtn">
+            Поделиться
+          </button>
+        </div>
+      </section>
+
+      <section id="formCard" class="card">
         <h2 class="card__title">Ввод данных</h2>
 
         <div id="greeting" class="greeting" aria-live="polite"></div>
@@ -115,13 +188,8 @@
             <button type="button" class="btn btn-ghost" id="resetBtn">
               Сбросить
             </button>
-            <button
-              type="button"
-              class="btn btn-outline"
-              id="sendToBotBtn"
-              hidden
-            >
-              Отправить боту
+            <button type="button" class="btn btn-outline" id="shareBtn" hidden>
+              Поделиться
             </button>
           </div>
 
@@ -133,70 +201,6 @@
             hidden
           ></div>
         </form>
-      </section>
-
-      <section id="resultsCard" class="card" hidden>
-        <h2 class="card__title">Результаты</h2>
-        <div class="totals-wrap">
-          <div class="total">
-            BMR (основной обмен): <span id="bmrValue">—</span> ккал
-          </div>
-          <div class="total">
-            TDEE (расход в день): <span id="tdeeValue">—</span> ккал
-          </div>
-          <div class="total total--accent">
-            Калории в день (дефицит 20%): <span id="deficitCal">—</span> ккал
-          </div>
-        </div>
-
-        <div class="table-scroll">
-          <table class="result-table">
-            <thead>
-              <tr>
-                <th>Неделя</th>
-                <th>Калории/день</th>
-                <th>Белки (г)</th>
-                <th>Жиры (г)</th>
-                <th>Углеводы (г)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td id="calW1">—</td>
-                <td id="pW1">—</td>
-                <td id="fW1">—</td>
-                <td id="cW1">—</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td id="calW2">—</td>
-                <td id="pW2">—</td>
-                <td id="fW2">—</td>
-                <td id="cW2">—</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td id="calW3">—</td>
-                <td id="pW3">—</td>
-                <td id="fW3">—</td>
-                <td id="cW3">—</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td id="calW4">—</td>
-                <td id="pW4">—</td>
-                <td id="fW4">—</td>
-                <td id="cW4">—</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="note">
-          План без учёта заболеваний. Для персональной настройки — обращайтесь к
-          специалисту.
-        </div>
       </section>
     </main>
 

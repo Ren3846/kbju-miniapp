@@ -9,7 +9,8 @@
   const form = document.getElementById("kbjuForm");
   const btnCalc = document.getElementById("calcBtn");
   const btnReset = document.getElementById("resetBtn");
-  const btnSend = document.getElementById("sendToBotBtn");
+  const btnShare = document.getElementById("shareBtn");
+  const btnRepeat = document.getElementById("repeatBtn");
   const alertBox = document.getElementById("formAlert");
   const greetingEl = document.getElementById("greeting");
 
@@ -19,6 +20,7 @@
   const selectActivity = document.getElementById("activity");
 
   const resultsCard = document.getElementById("resultsCard");
+  const formCard = document.getElementById("formCard");
   const bmrValue = document.getElementById("bmrValue");
   const tdeeValue = document.getElementById("tdeeValue");
   const deficitCal = document.getElementById("deficitCal");
@@ -174,24 +176,12 @@
       fillWeek(i, deficit);
     }
 
+    // Показываем результаты сверху, скрываем форму
     resultsCard.hidden = false;
-    btnSend.hidden = false;
+    formCard.hidden = true;
 
-    showAlert("Готово! Проверьте результаты ниже.", "ok");
+    showAlert("Готово! Проверьте результаты выше.", "ok");
     haptic("success");
-
-    // Telegram MainButton integration
-    if (tg) {
-      try {
-        tg.MainButton.setText("Отправить результаты боту");
-        tg.MainButton.show();
-        tg.MainButton.onClick(() => {
-          sendToBot();
-        });
-      } catch {
-        /* noop */
-      }
-    }
   }
 
   function getUserName() {
@@ -203,9 +193,43 @@
     return null;
   }
 
-  function sendToBot() {
-    // Compose payload
-    const payload = {
+  function shareResults() {
+    const text = `Калькулятор КБЖУ от @viksi666
+
+Мой план питания:
+• BMR: ${bmrValue.textContent} ккал
+• TDEE: ${tdeeValue.textContent} ккал  
+• Дефицит: ${deficitCal.textContent} ккал/день
+
+Неделя 1:
+• Калории: ${calW[1].textContent} ккал/день
+• Белки: ${pW[1].textContent} г
+• Жиры: ${fW[1].textContent} г
+• Углеводы: ${cW[1].textContent} г
+
+Создай тело мечты: https://viksi666.ru`;
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Мой план КБЖУ",
+          text: text,
+          url: "https://viksi666.ru",
+        })
+        .then(() => {
+          showAlert("Поделились результатами!", "ok");
+          haptic("success");
+        })
+        .catch(() => {
+          copyToClipboard(text);
+        });
+    } else {
+      copyToClipboard(text);
+    }
+  }
+
+  function saveResults() {
+    const data = {
       name: getUserName(),
       weight: Number(inputWeight.value),
       height: Number(inputHeight.value),
@@ -223,34 +247,36 @@
       })),
     };
 
-    const json = JSON.stringify(payload);
+    const json = JSON.stringify(data, null, 2);
+    copyToClipboard(json);
+    showAlert("Результаты скопированы в буфер обмена!", "ok");
+    haptic("success");
+  }
 
-    if (tg) {
-      try {
-        tg.sendData(json); // отправка в Data из WebApp
-        showAlert("Отправлено боту.", "ok");
+  function copyToClipboard(text) {
+    navigator.clipboard
+      ?.writeText(text)
+      .then(() => {
+        showAlert("Скопировано в буфер обмена!", "ok");
         haptic("success");
-      } catch {
-        showAlert("Не удалось отправить боту. Попробуйте снова.", "error");
+      })
+      .catch(() => {
+        showAlert("Не удалось скопировать. Попробуйте снова.", "error");
         haptic("error");
-      }
-    } else {
-      // Fallback: просто копируем в буфер
-      navigator.clipboard?.writeText(json);
-      showAlert("Скопировано в буфер обмена (вне Telegram).", "ok");
-    }
+      });
   }
 
   function resetAll() {
     form.reset();
     clearAlert();
     resultsCard.hidden = true;
-    btnSend.hidden = true;
-    if (tg) {
-      try {
-        tg.MainButton.hide();
-      } catch {}
-    }
+    formCard.hidden = false;
+  }
+
+  function repeatCalculation() {
+    resetAll();
+    showAlert("Введите новые данные для расчёта.", "ok");
+    haptic("light");
   }
 
   function greet() {
@@ -280,7 +306,8 @@
   });
 
   btnReset.addEventListener("click", resetAll);
-  btnSend.addEventListener("click", sendToBot);
+  btnShare.addEventListener("click", shareResults);
+  btnRepeat.addEventListener("click", repeatCalculation);
 
   // Live validation on blur
   [inputWeight, inputHeight, inputAge, selectActivity].forEach((el) => {
