@@ -39,7 +39,7 @@
             TDEE (расход в день): <span id="tdeeValue">—</span> ккал
           </div>
           <div class="total total--accent">
-            Калории в день (дефицит 20%): <span id="deficitCal">—</span> ккал
+            Калории в день: <span id="deficitCal">—</span> ккал
           </div>
         </div>
 
@@ -109,6 +109,16 @@
 
         <form id="kbjuForm" novalidate>
           <div class="form-grid">
+            <div class="form-group required">
+              <label for="goal">Цель</label>
+              <select id="goal" name="goal" class="input select" required>
+                <option value="" disabled selected>Выберите цель</option>
+                <option value="lose">Похудение</option>
+                <option value="gain">Набор массы</option>
+              </select>
+              <div class="field-error" data-error-for="goal"></div>
+            </div>
+
             <div class="form-group required">
               <label for="weight">Вес (кг)</label>
               <input

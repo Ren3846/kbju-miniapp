@@ -18,6 +18,7 @@
   const inputHeight = document.getElementById("height");
   const inputAge = document.getElementById("age");
   const selectActivity = document.getElementById("activity");
+  const selectGoal = document.getElementById("goal");
 
   const resultsCard = document.getElementById("resultsCard");
   const formCard = document.getElementById("formCard");
@@ -136,7 +137,15 @@
       setFieldError(selectActivity, "");
     }
 
-    return { ok, weight, height, age, activity };
+    const goal = selectGoal.value;
+    if (!goal) {
+      setFieldError(selectGoal, "Выберите цель");
+      ok = false;
+    } else {
+      setFieldError(selectGoal, "");
+    }
+
+    return { ok, weight, height, age, activity, goal };
   }
 
   // Calculations (женская формула Mifflin-St Jeor)
@@ -166,14 +175,30 @@
   function computeAndRender(data) {
     const bmr = calcBmrFemale(data.weight, data.height, data.age);
     const tdee = bmr * data.activity;
-    const deficit = tdee * 0.8; // -20%
+
+    // Расчёт калорий в зависимости от цели
+    let targetCalories;
+    let goalText;
+    if (data.goal === "lose") {
+      targetCalories = tdee * 0.8; // -20% для похудения
+      goalText = "дефицит 20%";
+    } else {
+      targetCalories = tdee * 1.2; // +20% для набора массы
+      goalText = "профицит 20%";
+    }
 
     bmrValue.textContent = Math.round(bmr);
     tdeeValue.textContent = Math.round(tdee);
-    deficitCal.textContent = Math.round(deficit);
+    deficitCal.textContent = Math.round(targetCalories);
+
+    // Обновляем заголовок с указанием цели
+    const goalLabel = document.querySelector(".total--accent");
+    goalLabel.innerHTML = `Калории в день (${goalText}): <span id="deficitCal">${Math.round(
+      targetCalories
+    )}</span> ккал`;
 
     for (let i = 1; i <= 4; i++) {
-      fillWeek(i, deficit);
+      fillWeek(i, targetCalories);
     }
 
     // Показываем результаты сверху, скрываем форму
@@ -194,6 +219,11 @@
   }
 
   function shareResults() {
+    const goalText = document
+      .querySelector(".total--accent")
+      .textContent.includes("дефицит")
+      ? "дефицит 20%"
+      : "профицит 20%";
     const text = `Калькулятор КБЖУ от @viksi666
 
 Мой план питания на 4 недели:
@@ -201,7 +231,7 @@
 📊 Основные показатели:
 • BMR (основной обмен): ${bmrValue.textContent} ккал
 • TDEE (расход в день): ${tdeeValue.textContent} ккал  
-• Дефицит калорий: ${deficitCal.textContent} ккал/день
+• Целевые калории (${goalText}): ${deficitCal.textContent} ккал/день
 
 📋 Еженедельный план (30% белки, 30% жиры, 40% углеводы):
 
@@ -251,15 +281,22 @@
   }
 
   function saveResults() {
+    const goalText = document
+      .querySelector(".total--accent")
+      .textContent.includes("дефицит")
+      ? "дефицит 20%"
+      : "профицит 20%";
     const data = {
       name: getUserName(),
       weight: Number(inputWeight.value),
       height: Number(inputHeight.value),
       age: Number(inputAge.value),
       activity: Number(selectActivity.value),
+      goal: selectGoal.value,
+      goalText: goalText,
       bmr: Number(bmrValue.textContent),
       tdee: Number(tdeeValue.textContent),
-      deficit: Number(deficitCal.textContent),
+      targetCalories: Number(deficitCal.textContent),
       weeks: [1, 2, 3, 4].map((i) => ({
         week: i,
         calories: Number(calW[i].textContent),
@@ -332,11 +369,13 @@
   btnRepeat.addEventListener("click", repeatCalculation);
 
   // Live validation on blur
-  [inputWeight, inputHeight, inputAge, selectActivity].forEach((el) => {
-    el.addEventListener("blur", () => {
-      validate();
-    });
-  });
+  [inputWeight, inputHeight, inputAge, selectActivity, selectGoal].forEach(
+    (el) => {
+      el.addEventListener("blur", () => {
+        validate();
+      });
+    }
+  );
 
   // Telegram theme / viewport tweaks
   if (tg) {
