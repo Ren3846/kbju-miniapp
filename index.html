@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Калькулятор КБЖУ (жен) — viksi666</title>
+    <meta
+      name="description"
+      content="Калькулятор КБЖУ для девушек. Расчёт калорий, белков, жиров и углеводов с учётом активности. Поддержка Telegram Mini App."
+    />
+    <meta name="theme-color" content="#0f0f12" />
+
+    <link rel="preconnect" href="https://telegram.org" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <h1>Калькулятор КБЖУ для девушек</h1>
+      <p class="subtitle">
+        by
+        <a href="https://instagram.com/viksi666" target="_blank" rel="noopener"
+          >@viksi666</a
+        >
+      </p>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <h2 class="card__title">Ввод данных</h2>
+
+        <div id="greeting" class="greeting" aria-live="polite"></div>
+
+        <form id="kbjuForm" novalidate>
+          <div class="form-grid">
+            <div class="form-group required">
+              <label for="weight">Вес (кг)</label>
+              <input
+                id="weight"
+                name="weight"
+                type="number"
+                inputmode="decimal"
+                class="input"
+                placeholder="Напр. 60"
+                min="35"
+                max="200"
+                step="0.1"
+                required
+              />
+              <div class="field-hint">Допустимо: 35–200</div>
+              <div class="field-error" data-error-for="weight"></div>
+            </div>
+
+            <div class="form-group required">
+              <label for="height">Рост (см)</label>
+              <input
+                id="height"
+                name="height"
+                type="number"
+                inputmode="decimal"
+                class="input"
+                placeholder="Напр. 170"
+                min="130"
+                max="220"
+                step="0.5"
+                required
+              />
+              <div class="field-hint">Допустимо: 130–220</div>
+              <div class="field-error" data-error-for="height"></div>
+            </div>
+
+            <div class="form-group required">
+              <label for="age">Возраст (лет)</label>
+              <input
+                id="age"
+                name="age"
+                type="number"
+                inputmode="numeric"
+                class="input"
+                placeholder="Напр. 25"
+                min="14"
+                max="80"
+                step="1"
+                required
+              />
+              <div class="field-hint">Допустимо: 14–80</div>
+              <div class="field-error" data-error-for="age"></div>
+            </div>
+
+            <div class="form-group required">
+              <label for="activity">Коэффициент активности</label>
+              <select
+                id="activity"
+                name="activity"
+                class="input select"
+                required
+              >
+                <option value="" disabled selected>Выберите активность</option>
+                <option value="1.2">Низкий (сидячая работа)</option>
+                <option value="1.4">Небольшой (1–3 тренировки/нед)</option>
+                <option value="1.6">Средний (3–5 тренировок/нед)</option>
+                <option value="1.7">Высокий (6–7 тренировок/нед)</option>
+              </select>
+              <div class="field-error" data-error-for="activity"></div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="calcBtn">
+              Рассчитать
+            </button>
+            <button type="button" class="btn btn-ghost" id="resetBtn">
+              Сбросить
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline"
+              id="sendToBotBtn"
+              hidden
+            >
+              Отправить боту
+            </button>
+          </div>
+
+          <div
+            id="formAlert"
+            class="alert"
+            role="alert"
+            aria-live="assertive"
+            hidden
+          ></div>
+        </form>
+      </section>
+
+      <section id="resultsCard" class="card" hidden>
+        <h2 class="card__title">Результаты</h2>
+        <div class="totals-wrap">
+          <div class="total">
+            BMR (основной обмен): <span id="bmrValue">—</span> ккал
+          </div>
+          <div class="total">
+            TDEE (расход в день): <span id="tdeeValue">—</span> ккал
+          </div>
+          <div class="total total--accent">
+            Калории в день (дефицит 20%): <span id="deficitCal">—</span> ккал
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="result-table">
+            <thead>
+              <tr>
+                <th>Неделя</th>
+                <th>Калории/день</th>
+                <th>Белки (г)</th>
+                <th>Жиры (г)</th>
+                <th>Углеводы (г)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td id="calW1">—</td>
+                <td id="pW1">—</td>
+                <td id="fW1">—</td>
+                <td id="cW1">—</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td id="calW2">—</td>
+                <td id="pW2">—</td>
+                <td id="fW2">—</td>
+                <td id="cW2">—</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td id="calW3">—</td>
+                <td id="pW3">—</td>
+                <td id="fW3">—</td>
+                <td id="cW3">—</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td id="calW4">—</td>
+                <td id="pW4">—</td>
+                <td id="fW4">—</td>
+                <td id="cW4">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          План без учёта заболеваний. Для персональной настройки — обращайтесь к
+          специалисту.
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <a href="https://viksi666.ru" target="_blank" rel="noopener" class="link"
+        >Создай тело мечты со мной!</a
+      >
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
